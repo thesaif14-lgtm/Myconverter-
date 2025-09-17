@@ -3,10 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Converter</title>
+  <title>Image Converter</title>
 </head>
 <body>
-  <h1>Welcome to My Converter Website</h1>
-  <p>This is a simple site. Soon you can convert JPG → PNG, PDF → Image, etc.</p>
+  <h1>JPG to PNG Converter</h1>
+  <input type="file" id="upload" accept="image/jpeg">
+  <button onclick="convert()">Convert to PNG</button>
+  <br><br>
+  <a id="downloadLink" style="display:none;">Download PNG</a>
+
+  <script>
+    function convert() {
+      const fileInput = document.getElementById('upload');
+      if (!fileInput.files[0]) {
+        alert("Please upload a JPG file!");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const pngData = canvas.toDataURL("image/png");
+          const link = document.getElementById('downloadLink');
+          link.href = pngData;
+          link.download = "converted.png";
+          link.style.display = "block";
+          link.innerText = "Download PNG File";
+        }
+      }
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+  </script>
 </body>
 </html>
